@@ -2,5 +2,5 @@
 
 # source me with . setup.sh
 
-export GITHUB_TOKEN="b691905badc82602bf1a3e0cde5614ac66d0e957"
-export GITHUB_ORG="cornet-baluster"
+export GITHUB_TOKEN="my-github-token"
+export GITHUB_ORG="my-github-org"
