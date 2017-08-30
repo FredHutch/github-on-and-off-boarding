@@ -21,13 +21,15 @@ command lines will work:
 
 # is user foo a member of the org?
 curl -X GET -d username=foo http://localhost:5000/
+# returns {"status": "yes"}
 
 # add user foo - they will get an invite email
 curl -X PUT -d username=foo http://localhost:5000/
+# returns {"status": "user has been invited"}
 
 # remove user foo from org
 curl -X DELETE -d username=foo http://localhost:5000/
-
+# returns {"status": "OK"}
 """
 
 # standard library imports
@@ -88,7 +90,6 @@ class GithubTeamManager(Resource):
                             required=True)
         args = parser.parse_args()
         result = github.orgs(org).memberships(args.username).PUT(headers=headers)
-        print("status code is {}".format(result.status_code))
         obj = result.json()
         if obj['state'] == 'pending':
             value = "user has been invited"
@@ -116,5 +117,9 @@ class GithubTeamManager(Resource):
 
 api.add_resource(GithubTeamManager, '/')
 
+# run me with:
+# FLASK_DEBUG=True FLASK_APP=app.py flask run
+# or simply:
+# python3 app.py
 if __name__ == '__main__':
     app.run(debug=True)
