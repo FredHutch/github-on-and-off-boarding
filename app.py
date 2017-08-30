@@ -16,24 +16,25 @@ GET          |  determine if user is member of org
 DELETE       |  remove user from org
 PUT          |  add user to org
 
-If app is running at http://localhost:5000, the following
+If app is running at http://localhost:5000/, the following
 command lines will work:
 
 # is user foo a member of the org?
-curl -X GET -d username=foo http://localhost:5000
+curl -X GET -d username=foo http://localhost:5000/
 
 # add user foo - they will get an invite email
-curl -X PUT -d username=foo http://localhost:5000
+curl -X PUT -d username=foo http://localhost:5000/
 
 # remove user foo from org
-curl -X DELETE -d username=foo http://localhost:5000
+curl -X DELETE -d username=foo http://localhost:5000/
 
 """
 
-
+# standard library imports
 import os
 import sys
 
+# third-party imports
 from hammock import Hammock as Github
 from flask import Flask
 from flask_restful import Resource, Api, reqparse
@@ -42,12 +43,15 @@ from flask_restful import Resource, Api, reqparse
 app = Flask(__name__) # pylint: disable=invalid-name
 api = Api(app)  # pylint: disable=invalid-name
 github = Github('https://api.github.com')  # pylint: disable=invalid-name
-token = os.getenv('GITHUB_TOKEN')  # pylint: disable=invalid-name
+
+token = os.getenv('GITHUB_TOKEN') # pylint: disable=invalid-name
 if not token:
     print("GITHUB_TOKEN not set!")
     sys.exit(1)
+
 headers = {"Authorization": "token {}".format(token)}  # pylint: disable=invalid-name
-org = os.getenv("GITHUB_ORG")  # pylint: disable=invalid-name
+
+org = os.getenv("GITHUB_ORG") # pylint: disable=invalid-name
 if not org:
     print("GITHUB_ORG not set!")
     sys.exit(1)
@@ -59,7 +63,7 @@ class GithubTeamManager(Resource):
         """GET method; query if user is member of org"""
         parser = reqparse.RequestParser()
         parser.add_argument('username', type=str,
-                            # help='github username to look up',
+                            help='github username to look up',
                             required=True)
         args = parser.parse_args()
         result = github.orgs(org).members(args.username).GET(headers=headers)
