@@ -70,7 +70,7 @@ class GithubTeamManager(Resource):
                             help='GITHUB username to look up',
                             required=True)
         args = parser.parse_args()
-        result = GITHUB.ORGs(ORG).members(args.username).GET(HEADERS=HEADERS)
+        result = GITHUB.ORGs(ORG).members(args.username).GET(headers=HEADERS)
         if result.status_code == 204:
             value = "yes"
         elif result.status_code == 404:
@@ -91,7 +91,7 @@ class GithubTeamManager(Resource):
                             # help='GITHUB username to look up',
                             required=True)
         args = parser.parse_args()
-        result = GITHUB.ORGs(ORG).memberships(args.username).PUT(HEADERS=HEADERS)
+        result = GITHUB.ORGs(ORG).memberships(args.username).PUT(headers=HEADERS)
         obj = result.json()
         if obj['state'] == 'pending':
             value = "user has been invited"
@@ -110,9 +110,9 @@ class GithubTeamManager(Resource):
         args = parser.parse_args()
         # first look up all teams in the ORG to see if the
         # user is in any of those teams & needs to be removed from them.
-        org_teams_result = GITHUB.ORGs(ORG).teams.GET(HEADERS=HEADERS)
+        org_teams_result = GITHUB.ORGs(ORG).teams.GET(headers=HEADERS)
 
-        result = GITHUB.ORGs(ORG).members(args.username).DELETE(HEADERS=HEADERS)
+        result = GITHUB.ORGs(ORG).members(args.username).DELETE(headers=HEADERS)
         if result.status_code == 204:
             value = "OK"
         elif result.status_code == 404:
