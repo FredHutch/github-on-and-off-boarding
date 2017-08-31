@@ -35,8 +35,10 @@ curl -X DELETE -d username=foo http://localhost:5000/
 # standard library imports
 import os
 import sys
+import time
 
 # third-party imports
+import requests
 from hammock import Hammock as Github
 from flask import Flask
 from flask_restful import Resource, Api, reqparse
@@ -44,7 +46,7 @@ from flask_restful import Resource, Api, reqparse
 
 APP = Flask(__name__) # pylint: disable=invalid-name
 API = Api(APP)
-GITHUB = Github('https://API.GITHUB.com')
+GITHUB = Github('https://api.github.com')
 
 TOKEN = os.getenv('GITHUB_TOKEN')
 if not TOKEN:
@@ -52,16 +54,37 @@ if not TOKEN:
     sys.exit(1)
 
 HEADERS = {}
-HEADERS["Authorization"] = "TOKEN {}".format(TOKEN)
-HEADERS["Accept"] = "application/vnd.GITHUB.hellcat-preview+json"
+HEADERS["Authorization"] = "token {}".format(TOKEN)
+HEADERS["Accept"] = "application/vnd.github.hellcat-preview+json"
 
 ORG = os.getenv("GITHUB_ORG")
 if not ORG:
     print("GITHUB_ORG not set!")
     sys.exit(1)
 
-class GithubTeamManager(Resource):
-    """RESTful class for managing ORG memberships"""
+def get_paginated_results(url, delay=0.3):
+    """
+    Handle paginated results transparently, returning them as one list.
+    """
+    results = requests.get(url, headers=HEADERS)
+    if not 'Link' in results.headers:
+        return results.json()
+    all_results = results.json()
+    while True:
+        if not 'rel="next"' in results.headers['Link']:
+            return all_results
+        links = results.headers['Link'].split(",")
+        nextpage = [x for x in links if 'rel="next"' in x][0]
+        nextpage = nextpage.split(";")[0].replace("<", "").replace(">", "").strip()
+        time.sleep(delay)
+        results = requests.get(nextpage, headers=HEADERS)
+        all_results.extend(results.json())
+
+    return all_results()
+
+
+class GithubOnOffBoarder(Resource):
+    """RESTful class for managing org/team memberships"""
 
     def get(self): # pylint: disable=no-self-use
         """GET method; query if user is member of ORG"""
@@ -93,6 +116,8 @@ class GithubTeamManager(Resource):
         args = parser.parse_args()
         result = GITHUB.orgs(ORG).memberships(args.username).PUT(headers=HEADERS)
         obj = result.json()
+        if 'message' in obj:
+            return obj
         if obj['state'] == 'pending':
             value = "user has been invited"
         elif obj['state'] == 'active':
@@ -108,10 +133,24 @@ class GithubTeamManager(Resource):
                             # help='GITHUB username to look up',
                             required=True)
         args = parser.parse_args()
-        # first look up all teams in the ORG to see if the
+        # first look up all teams in the org to see if the
         # user is in any of those teams & needs to be removed from them.
-        org_teams_result = GITHUB.orgs(ORG).teams.GET(headers=HEADERS)
+        teams = get_paginated_results(str(GITHUB.orgs(ORG).teams))
+        on_teams = []
+        # this will do a lot of I/O, but since this is not called very often,
+        # it should not hit our rate limit.
+        for team in teams:
+            result = GITHUB.teams(team['id']).memberships(args['username']).GET(headers=HEADERS)
+            # if status code is 200, the user is a member of the team, whether pending,
+            # active, or even a team maintainer.
+            if result.status_code == 200:
+                on_teams.append(team)
 
+        # remove user from teams
+        for team in on_teams:
+            result = GITHUB.teams(team['id']).memberships(args['username']).DELETE(headers=HEADERS)
+
+        # now remove user from team
         result = GITHUB.orgs(ORG).members(args.username).DELETE(headers=HEADERS)
         if result.status_code == 204:
             value = "OK"
@@ -121,7 +160,7 @@ class GithubTeamManager(Resource):
             value = "ERROR"
         return {"status": value}
 
-API.add_resource(GithubTeamManager, '/')
+API.add_resource(GithubOnOffBoarder, '/')
 
 # run me with:
 # FLASK_DEBUG=True FLASK_APP=app.py flask run
