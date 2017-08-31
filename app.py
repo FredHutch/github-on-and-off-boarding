@@ -124,7 +124,7 @@ class GithubTeamManager(Resource):
 API.add_resource(GithubTeamManager, '/')
 
 # run me with:
-# FLASK_DEBUG=True FLASK_APP=APP.py flask run
+# FLASK_DEBUG=True FLASK_APP=app.py flask run
 # or simply:
 # python3 app.py
 if __name__ == '__main__':
