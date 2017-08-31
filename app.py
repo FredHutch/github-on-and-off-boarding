@@ -51,7 +51,9 @@ if not token:
     print("GITHUB_TOKEN not set!")
     sys.exit(1)
 
-headers = {"Authorization": "token {}".format(token)}  # pylint: disable=invalid-name
+headers = {} # pylint: disable=invalid-name
+headers["Authorization"] = "token {}".format(token)
+headers["Accept"] = "application/vnd.github.hellcat-preview+json"
 
 org = os.getenv("GITHUB_ORG") # pylint: disable=invalid-name
 if not org:
@@ -106,6 +108,9 @@ class GithubTeamManager(Resource):
                             # help='github username to look up',
                             required=True)
         args = parser.parse_args()
+        # first look up all teams in the org to see if the
+        # user is in any of those teams & needs to be removed from them.
+        org_teams = github.orgs(org).teams.GET(headers=headers)
         result = github.orgs(org).members(args.username).DELETE(headers=headers)
         if result.status_code == 204:
             value = "OK"
