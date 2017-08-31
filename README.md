@@ -14,9 +14,8 @@ Employee Self Service.
 **NOTE**: At the moment, this app does not implement any authentication.
 Anyone on the campus intranet will be able to access it (though it is
 not currently deployed anywhere).
-We may add HutchNet ID/password authentication (and perhaps
-some authorization).
-
+Before the app is deployed, we will probably require that all
+access comes via SysEng boxes (such as jamborite).
 
 ## Running the app
 
