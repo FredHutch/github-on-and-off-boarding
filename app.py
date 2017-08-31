@@ -2,9 +2,9 @@
 
 """
 A RESTful Flask app to add/remove users from
-a given GitHub ORGanization (presumably FredHutch).
-Set the ORGanization in the environment variable
-GITHUB_ORG. Set your GITHUB authentication TOKEN
+a given GitHub organization (presumably FredHutch).
+Set the organization in the environment variable
+GITHUB_ORG. Set your GITHUB authentication token
 in GITHUB_TOKEN.
 
 Pass a 'username' parameter to the '/' endpoint
@@ -12,24 +12,24 @@ for the following actions:
 
 HTTP verb    |   action
 ------------------------
-GET          |  determine if user is member of ORG
-DELETE       |  remove user from ORG
-PUT          |  add user to ORG
+GET          |  determine if user is member of org
+DELETE       |  remove user from org
+PUT          |  add user to org
 
 If app is running at http://localhost:5000/, the following
 command lines will work:
 
-# is user foo a member of the ORG?
+# is user foo a member of the org?
 curl -X GET -d username=foo http://localhost:5000/
-# returns {"status": "yes"}
+# returns {"status": true}
 
 # add user foo - they will get an invite email
 curl -X PUT -d username=foo http://localhost:5000/
-# returns {"status": "user has been invited"}
+# returns {"status": true}
 
-# remove user foo from ORG
+# remove user foo from org
 curl -X DELETE -d username=foo http://localhost:5000/
-# returns {"status": "OK"}
+# returns {"status": true}
 """
 
 # standard library imports
@@ -95,11 +95,11 @@ class GithubOnOffBoarder(Resource):
         args = parser.parse_args()
         result = GITHUB.orgs(ORG).members(args.username).GET(headers=HEADERS)
         if result.status_code == 204:
-            value = "yes"
+            value = True
         elif result.status_code == 404:
-            value = "no"
+            value = False
         elif result.status_code == 302:
-            value = "you are not an ORGanization member"
+            value = "you are not an organization member"
         return {'status': value}
 
     def put(self): # pylint: disable=no-self-use
@@ -119,7 +119,7 @@ class GithubOnOffBoarder(Resource):
         if 'message' in obj:
             return obj
         if obj['state'] == 'pending':
-            value = "user has been invited"
+            value = True
         elif obj['state'] == 'active':
             value = "user is already a member"
         else:
@@ -153,7 +153,7 @@ class GithubOnOffBoarder(Resource):
         # now remove user from team
         result = GITHUB.orgs(ORG).members(args.username).DELETE(headers=HEADERS)
         if result.status_code == 204:
-            value = "OK"
+            value = True
         elif result.status_code == 404:
             value = "not a member or not authenticated"
         else:
