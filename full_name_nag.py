@@ -18,6 +18,8 @@ GitHub account is a fredhutch.org address? FIXME TODO
 
 """
 
+import json
+
 import app
 
 def nag(user):
@@ -48,11 +50,13 @@ on GitHub until the full name is set.
 
 Thank you!
     """.format(user)
-    # TODO:
-    # post an issue in a repos
-    # put the user's name in the issue title
-    # create the repos first:
-    # FredHutch/github-organization-compliance (?)
+    issue_dict = dict(title="Attention @{}".format(user),
+                      body=message)
+    issue = json.dumps(issue_dict)
+    url = app.GITHUB.repos(app.ORG, 'organization-policy-compliance').issues
+    result = url.POST(data=issue, headers=app.HEADERS)
+    print("creating issue for {}; result code was: {}".format(user,
+                                                              result.status_code))
 
 
 def main():
