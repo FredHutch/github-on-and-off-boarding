@@ -29,19 +29,17 @@ Dear @{} ,
 
 This is an automated message from FredHutch.
 
-In order to keep better track of
-members of the
-[FredHutch](https://github.com/orgs/FredHutch/people)
-organization on GitHub, we are requiring that all
-members have a full name in their GitHub profile.
+In order to keep better track of members of the
+[FredHutch](https://github.com/orgs/FredHutch/people) organization on GitHub, we are
+requiring that all members have a full name
+in their GitHub profile.
 
 You do not have a full name in your profile. Please
-[edit your profile](https://github.com/settings/profile)
-and add your full name.
+[edit your profile](https://github.com/settings/profile) and add your full name.
 
-Additionally, the email address linked to your
-GitHub account should be a `fredhutch.org`
-(or `fhcrc.org`) address.
+Additionally, your work email address (e.g. ending @fredhutch.org )
+should be added to your GitHub account as a secondary email address.
+You may flag this email as private in GitHub.
 
 Please make these changes as soon as possible.
 In future, accounts without a full name set
