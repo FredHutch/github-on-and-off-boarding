@@ -7,7 +7,8 @@ dependencies:
     - docker build  -t fredhutch/github-on-and-off-boarding:$CIRCLE_SHA1 .
     - curl -LO https://github.com/rancher/rancher-compose/releases/download/v0.12.5/rancher-compose-linux-amd64-v0.12.5.tar.gz
     - tar zxf rancher-compose-linux-amd64-v0.12.5.tar.gz
-
+    - curl -LO https://releases.rancher.com/cli/v0.6.2/rancher-linux-amd64-v0.6.2.tar.gz
+    - tar zxf rancher-linux-amd64-v0.6.2.tar.gz
 
 
 test:
@@ -21,4 +22,5 @@ deployment:
     commands:
       - docker tag fredhutch/github-on-and-off-boarding:$CIRCLE_SHA1 fredhutch/github-on-and-off-boarding:latest
       - docker login -e fredhutch@fhcrc.org -u $DOCKER_USER -p "$DOCKER_PASS" && docker push fredhutch/github-on-and-off-boarding:latest
-      - rancher-compose-v0.12.5/rancher-compose --project-name github-on-and-off-boarding --url https://ponderosa.fhcrc.org/v1/projects/1a38/  --access-key $RANCHERAPI_ACCESSKEY --secret-key $RANCHERAPI_SECRETKEY up -d --pull --force-upgrade --confirm-upgrade github-on-and-off-boarding
+      # - rancher-compose-v0.12.5/rancher-compose --project-name github-on-and-off-boarding --url https://ponderosa.fhcrc.org/v1/projects/1a38/  --access-key $RANCHERAPI_ACCESSKEY --secret-key $RANCHERAPI_SECRETKEY up -d --pull --force-upgrade --confirm-upgrade github-on-and-off-boarding
+      - rancher-v0.6.2/rancher --url https://ponderosa.fhcrc.org --access-key $RANCHERAPI_KEY --secret-key $RANCHERAPI_SECRET up -d --pull --force-upgrade --confirm-upgrade --stack github-on-and-off-boarding --file docker-compose.yml --rancher-file rancher-compose.yml
