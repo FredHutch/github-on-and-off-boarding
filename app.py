@@ -122,6 +122,8 @@ class GithubOnOffBoarder(Resource):
             value = "you are not an organization member"
         elif result.status_code == 401:
             value = "not properly authorized"
+        else:
+            value = "unknown"
         return {'status': value}
 
     def put(self): # pylint: disable=no-self-use
