@@ -5,6 +5,8 @@ services:
       - GITHUB_TOKEN
       - GITHUB_ORG
     image: fredhutch/github-on-and-off-boarding:latest
+    ports:
+      - "8000"
     labels:
       io.rancher.container.pull_image: always
     restart: always
