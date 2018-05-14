@@ -11,11 +11,8 @@ It's designed to be used in an automated on-boarding/off-boarding workflow.
 This would be facilitated by having a field for GitHub username in
 Employee Self Service.
 
-**NOTE**: At the moment, this app does not implement any authentication.
-Anyone on the campus intranet will be able to access it (though it is
-not currently deployed anywhere).
-Before the app is deployed, we will probably require that all
-access comes via SysEng boxes (such as jamborite).
+**NOTE**: Tasks `2` and `3` above require you to call the service from
+the host `jamborite`. Calling from other hosts will result in an error.
 
 ## Running the app
 
@@ -42,7 +39,7 @@ PUT          |  add user to org
 ### API Documentation
 
 The following examples assume that the application is deployed
-at [https://toolbox.fhcrc.org/github-on-off-boarding/](https://toolbox.fhcrc.org/github-on-off-boarding/).
+at [https://github-offboarding.fhcrc.org/](https://github-offboarding.fhcrc.org/).
 
 They involve a user with the username `foo`. Note that this is the **GitHub**
 username, not a HutchNet ID or any other kind of identifier.
@@ -54,7 +51,7 @@ Determines if user is a member of the organization.
 Example call:
 
 ```
-curl https://toolbox.fhcrc.org/github-on-off-boarding/?username=foo
+curl https://github-offboarding.fhcrc.org/?username=foo
 ```
 
 Example result:
@@ -73,7 +70,7 @@ invitation, by clicking a link in an email.
 Example call:
 
 ```
-curl -X PUT https://toolbox.fhcrc.org/github-on-off-boarding/?username=foo
+curl -X PUT https://github-offboarding.fhcrc.org/?username=foo
 ```
 
 Example result:
