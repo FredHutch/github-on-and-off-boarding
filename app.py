@@ -40,7 +40,7 @@ import time
 # third-party imports
 import requests
 from hammock import Hammock as Github
-from flask import Flask
+from flask import Flask, request
 from flask_restful import Resource, Api, reqparse
 
 
@@ -62,6 +62,25 @@ if not ORG:
     print("GITHUB_ORG not set!")
     sys.exit(1)
 
+# localhost, jamborite, and hamtramck
+APPROVED_IPS = ["127.0.0.1", "140.107.42.44", "140.107.73.85"]
+
+def get_remote_ip(req):
+    """
+    Get remote IP from request.
+    If app is deployed in rancher, remote IP will be in the `X-Forwarded-For`
+    request header. If deployed locally, the `remote_addr` attribute of
+    the request will contain the remote IP.
+    If user tries to add their own 'X-Forwarded-For' header, it will be
+    prepended to the existing value and separated from it with a comma,
+    so look for the comma and reject those connections.
+    """
+    if "X-Forwarded-For" in req.headers:
+        ip_ = req.headers['X-Forwarded-For']
+        if "," in ip_:
+            raise ValueError
+        return ip_
+    return req.remote_addr
 
 def get_paginated_results(url, delay=0.3):
     """
@@ -112,7 +131,9 @@ class GithubOnOffBoarder(Resource):
         as 'pending'. When they accept the invite
         their membership state will be changed to 'active'.
         """
-        # FIXME - require auth or specific remote IP
+        remote_ip = get_remote_ip(request)
+        if not remote_ip in APPROVED_IPS:
+            return dict(status="unknown ip {}, call me from jamborite".format(remote_ip)), 500
         parser = reqparse.RequestParser()
         parser.add_argument('username', type=str,
                             # help='GITHUB username to look up',
@@ -132,7 +153,9 @@ class GithubOnOffBoarder(Resource):
 
     def delete(self): # pylint: disable=no-self-use
         """DELETE method, removes user from ORG."""
-        # FIXME - require auth or specific remote IP
+        remote_ip = get_remote_ip(request)
+        if not remote_ip in APPROVED_IPS:
+            return dict(status="unknown ip {}, call me from jamborite".format(remote_ip)), 500
         parser = reqparse.RequestParser()
         parser.add_argument('username', type=str,
                             # help='GITHUB username to look up',

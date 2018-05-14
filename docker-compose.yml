@@ -1,0 +1,15 @@
+version: '2'
+services:
+  github-on-and-off-boarding:
+    secrets:
+      - GITHUB_TOKEN
+      - GITHUB_ORG
+    image: fredhutch/github-on-and-off-boarding:latest
+    labels:
+      io.rancher.container.pull_image: always
+
+secrets:
+  GITHUB_TOKEN:
+    external: true
+  GITHUB_ORG:
+    external: true

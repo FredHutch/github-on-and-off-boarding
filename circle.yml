@@ -1,0 +1,24 @@
+machine:
+  services:
+    - docker
+
+dependencies:
+  override:
+    - docker build  -t fredhutch/github-on-and-off-boarding:$CIRCLE_SHA1 .
+    - curl -LO https://github.com/rancher/rancher-compose/releases/download/v0.12.5/rancher-compose-linux-amd64-v0.12.5.tar.gz
+    - tar zxf rancher-compose-linux-amd64-v0.12.5.tar.gz
+
+
+
+test:
+  override:
+    # - docker run --rm  -w /app $DOCKER_HUB_HOST/$DOCKER_USER/github-on-and-off-boarding:$CIRCLE_SHA1 python3 unit_tests.py
+    - echo write some unit tests
+
+deployment:
+  master:
+    branch: master
+    commands:
+      - docker tag fredhutch/github-on-and-off-boarding:$CIRCLE_SHA1 $DOCKER_HUB_HOST/$DOCKER_USER/github-on-and-off-boarding:latest
+      - docker login -e fredhutch@fhcrc.org -u $DOCKER_USER -p "$DOCKER_PASS" && docker push fredhutch/github-on-and-off-boarding:latest
+      - rancher-compose-v0.12.5/rancher-compose --project-name github-on-and-off-boarding --url https://ponderosa.fhcrc.org/v1/projects/1a38/  --access-key $RANCHERAPI_ACCESSKEY --secret-key $RANCHERAPI_SECRETKEY up -d --pull --force-upgrade --confirm-upgrade github-on-and-off-boarding

@@ -21,6 +21,4 @@ EXPOSE 8000
 
 COPY run.sh /app/
 
-# FIXME : CMD should source GITHUB_ORG and GITHUB_TOKEN from secrets files
-
-CMD ./run.sh
+CMD ["/bin/sh", "-c", "GITHUB_ORG=`cat /run/secrets/GITHUB_ORG` GITHUB_TOKEN=`cat /run/secrets/GITHUB_TOKEN` ./run.sh"]
