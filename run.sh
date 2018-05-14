@@ -1,0 +1,6 @@
+#!/bin/bash
+
+# export GITHUB_ORG=.....
+# export GITHUB_TOKEN=.....
+
+gunicorn --workers=4  --bind 0.0.0.0:8000 wsgi

@@ -62,6 +62,7 @@ if not ORG:
     print("GITHUB_ORG not set!")
     sys.exit(1)
 
+
 def get_paginated_results(url, delay=0.3):
     """
     Handle paginated results transparently, returning them as one list.
@@ -100,6 +101,8 @@ class GithubOnOffBoarder(Resource):
             value = False
         elif result.status_code == 302:
             value = "you are not an organization member"
+        elif result.status_code == 401:
+            value = "not properly authorized"
         return {'status': value}
 
     def put(self): # pylint: disable=no-self-use
@@ -109,6 +112,7 @@ class GithubOnOffBoarder(Resource):
         as 'pending'. When they accept the invite
         their membership state will be changed to 'active'.
         """
+        # FIXME - require auth or specific remote IP
         parser = reqparse.RequestParser()
         parser.add_argument('username', type=str,
                             # help='GITHUB username to look up',
@@ -128,6 +132,7 @@ class GithubOnOffBoarder(Resource):
 
     def delete(self): # pylint: disable=no-self-use
         """DELETE method, removes user from ORG."""
+        # FIXME - require auth or specific remote IP
         parser = reqparse.RequestParser()
         parser.add_argument('username', type=str,
                             # help='GITHUB username to look up',
