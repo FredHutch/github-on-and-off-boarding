@@ -62,8 +62,8 @@ if not ORG:
     print("GITHUB_ORG not set!")
     sys.exit(1)
 
-# localhost, jamborite, and hamtramck
-APPROVED_IPS = ["127.0.0.1", "140.107.42.44", "140.107.73.85"]
+# localhost, jamborite, hamtramck, and gizmo1
+APPROVED_IPS = ["127.0.0.1", "140.107.42.44", "140.107.73.85", "140.107.134.232"]
 
 def get_remote_ip(req):
     """

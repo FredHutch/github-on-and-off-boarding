@@ -64,8 +64,9 @@ def main():
     for member in members:
         member_full = app.GITHUB.users(member['login']).GET(headers=app.HEADERS).json()
         if not member_full['name']:
-            print("no name for {}!".format(member_full['login']))
-            nag(member_full['login'])
+            # print("no name for {}!".format(member_full['login']))
+            print(member_full['login'])
+            #nag(member_full['login'])
 
 if __name__ == "__main__":
     main()
