@@ -135,7 +135,7 @@ class GithubOnOffBoarder(Resource):
         """
         remote_ip = get_remote_ip(request)
         if not remote_ip in APPROVED_IPS:
-            return dict(status="unknown ip {}, call me from jamborite".format(remote_ip)), 500
+            return dict(status="unknown ip {}, call me from jamborite or gizmo1".format(remote_ip)), 500
         parser = reqparse.RequestParser()
         parser.add_argument('username', type=str,
                             # help='GITHUB username to look up',
@@ -157,7 +157,7 @@ class GithubOnOffBoarder(Resource):
         """DELETE method, removes user from ORG."""
         remote_ip = get_remote_ip(request)
         if not remote_ip in APPROVED_IPS:
-            return dict(status="unknown ip {}, call me from jamborite".format(remote_ip)), 500
+            return dict(status="unknown ip {}, call me from jamborite or gizmo1".format(remote_ip)), 500
         parser = reqparse.RequestParser()
         parser.add_argument('username', type=str,
                             # help='GITHUB username to look up',

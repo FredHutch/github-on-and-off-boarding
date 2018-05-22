@@ -12,7 +12,7 @@ This would be facilitated by having a field for GitHub username in
 Employee Self Service.
 
 **NOTE**: Tasks `2` and `3` above require you to call the service from
-the host `jamborite`. Calling from other hosts will result in an error.
+the hosts `jamborite` or `gizmo1`. Calling from other hosts will result in an error.
 
 ## Running the app
 
