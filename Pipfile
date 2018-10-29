@@ -11,12 +11,14 @@ hammock = "*"
 flask = "*"
 flask-restful = "*"
 gunicorn = "*"
+requests = "*"
 
 
 [dev-packages]
 
 ipython = "*"
 pylint = "*"
+black = "*"
 
 
 [requires]
