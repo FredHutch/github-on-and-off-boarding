@@ -216,7 +216,7 @@ class GithubOnOffBoarder(Resource):
                 .DELETE(headers=HEADERS)
             )
 
-        # now remove user from team
+        # now remove user from org
         result = GITHUB.orgs(ORG).members(args.username).DELETE(headers=HEADERS)
         if result.status_code == 204:
             value = True
