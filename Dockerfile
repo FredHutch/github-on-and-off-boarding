@@ -2,20 +2,18 @@ FROM ubuntu:16.04
 
 RUN apt-get update -y && apt-get install -y python3 python3-pip
 
-RUN pip3 install pipenv
-
 COPY app.py /app/
 
 COPY wsgi.py /app/
 
 WORKDIR /app
 
-COPY Pipfile* /app/
+COPY requirements.txt /app/
 
 ENV LC_ALL=C.UTF-8
 ENV LANG=C.UTF-8
 
-RUN pipenv install --system
+RUN pip3 install -r requirements.txt
 
 EXPOSE 8000
 

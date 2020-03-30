@@ -1,0 +1,5 @@
+hammock
+flask
+flask-restful
+gunicorn
+requests
